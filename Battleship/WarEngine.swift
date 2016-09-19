@@ -27,9 +27,7 @@ class WarEngine{
     func checkLocation(location: [Int]) -> Bool {
         for i in myShips{
             for j in location{
-                if i == j{
-                    return false
-                }
+                if i == j{  return false }
             }
         }
         return true
@@ -42,15 +40,16 @@ class WarEngine{
             for num in 0..<ship{
                 intArr.append(randomNum+num)
             }
-            
         }else if direction%2 == 1 && randomNum < 100-10*(ship-1){
             for num in 0..<ship{
                 intArr.append(randomNum+10*num)
             }
-        }else{
-            intArr = addShips(direction: direction, ship: ship)
         }
-        return intArr
+        if intArr.count == ship && checkLocation(location: intArr){
+            return intArr
+        }else{
+            return addShips(direction: direction, ship: ship)
+        }
     }
     
     func setupBattleField(){

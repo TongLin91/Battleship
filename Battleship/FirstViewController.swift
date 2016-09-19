@@ -88,8 +88,8 @@ class FirstViewController: UIViewController {
             sender.backgroundColor = UIColor.gray
             sender.isEnabled = false
         }
-        //print(engine.myShips.sorted())
-        //print(shipFound.sorted())
+        print(engine.myShips.sorted())
+        print(shipFound.sorted())
     }
     
     func setUpGameLabel() {
