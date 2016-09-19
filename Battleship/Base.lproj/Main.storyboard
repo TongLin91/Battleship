@@ -19,14 +19,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MHh-ki-0UB"/>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jZJ-NB-kNR">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jZJ-NB-kNR">
                                 <fontDescription key="fontDescription" type="system" pointSize="31"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view contentMode="center" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hgq-4G-YDa">
+                                <frame key="frameInset" minX="48.57%" minY="90" width="340" height="340"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TMi-ug-94h">
-                                <frame key="frameInset" minX="21" minY="564" width="81" height="39"/>
+                                <frame key="frameInset" minX="147" minY="459" width="81" height="39"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Reset">
@@ -39,18 +43,14 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="4ug-Mw-9AY" firstAttribute="top" secondItem="MHh-ki-0UB" secondAttribute="bottom" constant="80" id="AZN-53-5yp"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="MHh-ki-0UB" secondAttribute="trailing" constant="10" id="Wlz-tg-bc8"/>
                             <constraint firstAttribute="trailingMargin" secondItem="jZJ-NB-kNR" secondAttribute="trailing" id="Xcp-aY-Gk8"/>
-                            <constraint firstItem="MHh-ki-0UB" firstAttribute="leading" secondItem="tsR-hK-woN" secondAttribute="leadingMargin" constant="5" id="aYl-6g-fuY"/>
                             <constraint firstItem="jZJ-NB-kNR" firstAttribute="leading" secondItem="tsR-hK-woN" secondAttribute="leadingMargin" id="c3K-yF-n7g"/>
-                            <constraint firstItem="MHh-ki-0UB" firstAttribute="top" secondItem="jZJ-NB-kNR" secondAttribute="bottom" constant="30" id="nE7-8Y-vTI"/>
                             <constraint firstItem="jZJ-NB-kNR" firstAttribute="top" secondItem="Ia1-K6-d13" secondAttribute="bottom" constant="10" id="s1r-c0-oCi"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="First" image="first" id="acW-dT-cKf"/>
                     <connections>
-                        <outlet property="buttonContainer" destination="MHh-ki-0UB" id="xAK-5B-ja0"/>
+                        <outlet property="buttonContainer" destination="hgq-4G-YDa" id="K1l-ZW-FW2"/>
                         <outlet property="gameLabel" destination="jZJ-NB-kNR" id="gE1-mA-juQ"/>
                     </connections>
                 </viewController>

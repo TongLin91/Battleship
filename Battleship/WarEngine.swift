@@ -10,9 +10,9 @@ import Foundation
 
 class WarEngine{
     let totalBlocks: Int
-    var myShip = [Int]()
-    let ships = [5,4,3,3,2]
-    private  var battleField = [State]()
+    var myShips = [Int]()
+    private let ships = [5,4,3,3,2]
+    private var battleField = [State]()
     
     init(totalBlocks:Int){
         self.totalBlocks = totalBlocks
@@ -24,8 +24,8 @@ class WarEngine{
         case miss
     }
 
-    func checkLocations(location: [Int]) -> Bool {
-        for i in myShip{
+    func checkLocation(location: [Int]) -> Bool {
+        for i in myShips{
             for j in location{
                 if i == j{
                     return false
@@ -35,42 +35,37 @@ class WarEngine{
         return true
     }
     
+    func addShips(direction: Int, ship: Int) -> [Int]{
+        let randomNum = Int(arc4random_uniform(UInt32(totalBlocks)))
+        var intArr = [Int]()
+        if direction%2 == 0 && randomNum%10 <= 10-ship{
+            for num in 0..<ship{
+                intArr.append(randomNum+num)
+            }
+            
+        }else if direction%2 == 1 && randomNum < 100-10*(ship-1){
+            for num in 0..<ship{
+                intArr.append(randomNum+10*num)
+            }
+        }else{
+            intArr = addShips(direction: direction, ship: ship)
+        }
+        return intArr
+    }
+    
     func setupBattleField(){
         battleField = Array(repeating: .miss, count: totalBlocks)
-        myShip.removeAll()
         for ship in ships{
-            var condi = false
             let direction = Int(arc4random_uniform(UInt32(10)))
-            while condi == false{
-                var tempLocation = [Int]()
-                let randomNum = Int(arc4random_uniform(UInt32(totalBlocks)))
-                if direction%2 == 0{
-                    if randomNum%10 <= 10-ship{
-                        for num in 0..<ship{
-                            tempLocation.append(randomNum+num)
-                        }
-                    }
-                }else{
-                    if randomNum < 100-10*(ship-1){
-                        for num in 0..<ship{
-                            tempLocation.append(randomNum+10*num)
-                        }
-                    }
-                }
-                if tempLocation.count > 0{
-                    if checkLocations(location: tempLocation){
-                        for i in tempLocation{
-                            battleField[i] = .hit
-                            myShip.append(i)
-                        }
-                        condi = true
-                    }
-                }
+            let tempShip: [Int] = addShips(direction: direction, ship: ship)
+            for i in tempShip{
+                battleField[i] = .hit
+                myShips.append(i)
             }
         }
     }
     
-    func checkCard(_ cardIn: Int) -> Bool{
+    func checkShip(_ cardIn: Int) -> Bool{
         assert(cardIn < battleField.count)  //helps with debugging
         return battleField[cardIn] == .hit
     }

@@ -36,24 +36,24 @@ class FirstViewController: UIViewController {
             setUpGameButtons(v: buttonContainer, totalButtons: self.totalBlocks, buttonsPerRow: 10)
             self.view.setNeedsDisplay()
         }
-        print(engine.myShip.sorted())
-        print(shipFound.sorted())
         loaded = true
     }
     
     func resetButtonColors() {
         for v in buttonContainer.subviews {
             if let button = v as? UIButton {
-                button.backgroundColor = UIColor.blue
+                button.backgroundColor = UIColor.cyan
                 button.isEnabled = true
             }
         }
     }
     
     func handleReset() {
+        shipFound.removeAll()
+        engine.myShips.removeAll()
         resetButtonColors()
         engine.setupBattleField()
-        shipFound.removeAll()
+        setUpGameLabel()
     }
     
     func disableCardButtons() {
@@ -68,35 +68,32 @@ class FirstViewController: UIViewController {
         handleReset()
     }
     
+    func endGameCheck(){
+        if engine.myShips.sorted() == shipFound.sorted(){
+            gameLabel.text = "All ships sunk!"
+            disableCardButtons()
+        }
+    }
+    
     func buttonTapped(_ sender: UIButton) {
         gameLabel.text = sender.currentTitle
-        
-        if engine.checkCard(sender.tag - 1) {
+        if engine.checkShip(sender.tag - 1) {
             gameLabel.text = "Target found!"
             sender.backgroundColor = UIColor.green
             shipFound.append(sender.tag - 1)
             sender.isEnabled = false
-            if engine.myShip.sorted() == shipFound.sorted(){
-                gameLabel.text = "All ships sunk!"
-                disableCardButtons()
-            }
+            endGameCheck()
         } else {
             gameLabel.text = "Nope! Guess again."
-            sender.backgroundColor = UIColor.red
+            sender.backgroundColor = UIColor.gray
             sender.isEnabled = false
         }
+        //print(engine.myShips.sorted())
+        //print(shipFound.sorted())
     }
-    func setUpResetButton() {
-        let resetRect = CGRect(x: 10, y: 300, width: 60, height: 40)
-        let resetButton = UIButton(frame: resetRect)
-        resetButton.setTitle(resetTitle, for: UIControlState())
-        resetButton.backgroundColor = UIColor.darkGray
-        resetButton.addTarget(self, action: #selector(handleReset), for: .touchUpInside)
-        view.addSubview(resetButton)
-    }
- 
-    func setUpGameLabel () {
-        gameLabel.text = "Battelship!"
+    
+    func setUpGameLabel() {
+        gameLabel.text = "Battleship!"
     }
     
     func setUpGameButtons(v: UIView, totalButtons: Int, buttonsPerRow : Int) {
@@ -108,7 +105,7 @@ class FirstViewController: UIViewController {
             let rect = CGRect(origin: CGPoint(x: side * CGFloat(x), y: (CGFloat(y) * side)), size: CGSize(width: side, height: side))
             let button = UIButton(frame: rect)
             button.tag = i
-            button.backgroundColor = UIColor.blue
+            button.backgroundColor = UIColor.cyan
             button.setTitle(String(i), for: UIControlState())
             button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
             v.addSubview(button)
