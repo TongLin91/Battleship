@@ -21,47 +21,61 @@ class BattleshipBrain {
         case occupied(State, Ship)
         case empty(State)
         
-        mutating func tryToHit() -> Bool {
+        mutating func tryToHit(){
             switch self {
             case .occupied(let state, let ship):
                 switch state {
                 case .hidden:
                     self = Coordinate.occupied(.shown, ship)
-                    return true
                 case .shown:
-                    return true
+                    break
                 }
             case .empty:
                 self = Coordinate.empty(.shown)
-                return false
             }
         }
     }
     
+    enum GamePhase{
+        case Planning
+        case Gaming
+    }
+    
     let rows: Int
     let columns: Int
-
+    var count: Int
+    var phase: GamePhase
+    
     private var coordinates: [[Coordinate]]
     
     init(rows: Int, columns: Int){
         self.rows = rows
         self.columns = columns
+        self.phase = .Planning
         self.coordinates = [[Coordinate]]()
+        self.count = 0
         setupBoard()
     }
     
     
     func setupBoard() {
-        for r in 0..<rows {
+        for _ in 0..<rows {
             self.coordinates.append([Coordinate](repeating: .empty(.hidden), count: columns))
             
             // this just sets one hit per column
-            coordinates[r][Int(arc4random_uniform(UInt32(columns)))] = Coordinate.occupied(.hidden, .carrier(5))
+            //coordinates[r][c] = Coordinate.occupied(.hidden, .carrier(5))
         }
+    }
+    
+    func setCoordinate(r: Int, c: Int){
+        coordinates[r][c] = Coordinate.occupied(.hidden, .carrier(5))
+        count += 1
     }
     
     func resetBoard() {
         self.coordinates = [[Coordinate]]()
+        self.phase = .Planning
+        self.count = 0
         setupBoard()
     }
     
@@ -69,8 +83,14 @@ class BattleshipBrain {
         return coordinates[i][j]
     }
     
-    func strike(atRow r: Int, andColumn c: Int) -> Bool {
-        return coordinates[r][c].tryToHit()
+    func strike(atRow r: Int, andColumn c: Int){
+        coordinates[r][c].tryToHit()
+    }
+    
+    func delay(delay:Double, closure:@escaping ()->()) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            closure()
+        }
     }
     
     func gameFinished() -> Bool {

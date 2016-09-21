@@ -15,6 +15,7 @@ class BattleshipViewController: UIViewController {
     
     let brain: BattleshipBrain
     
+    
     required init?(coder aDecoder: NSCoder) {
         self.brain = BattleshipBrain(rows: 5, columns: 5)
         super.init(coder: aDecoder)
@@ -22,7 +23,7 @@ class BattleshipViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         // better than viewDidLayoutSubviews but not all the way there
         self.view.layoutIfNeeded()
         
@@ -34,43 +35,65 @@ class BattleshipViewController: UIViewController {
         let r = (sender.tag - 1) / brain.columns
         let c = (sender.tag - 1) % brain.columns
         
-        // note how the strike itself isn't updating the interface
-        _ = brain.strike(atRow: r, andColumn: c)
+            brain.setCoordinate(r: r, c: c)
+            if brain.count == 5{
+                brain.phase = .Gaming
+                setUpGameButtons(v: gridView)
+                messageLabel.text = "Good luck"
+                Computer()
+            }
+            print(brain.count)
+        
+            /*
+            _ = brain.strike(atRow: r, andColumn: c)
+            
+            // check for win
+            if brain.gameFinished() {
+                messageLabel.text = "You win!"
+            }
+            else {
+                messageLabel.text = "Keep guessing"
+            }
+            */
         
         // redraw the whole board
         drawBoard()
-        
-        // check for win
-        if brain.gameFinished() {
-            messageLabel.text = "You win!"
-        }
-        else {
-            messageLabel.text = "Keep guessing"
-        }
     }
     
     func drawBoard() {
         for r in 0..<brain.rows {
             for c in 0..<brain.columns {
-                // find the button by tag
-                // our tag is one-based so we add 1
-                if let button = gridView.viewWithTag(r * brain.columns + c + 1) as? UIButton {
-                    
-                    // funky subscript call with two indexes ([r][c] doesn't seem to work)
-                    switch brain[r, c] {
-                    case .empty(let state):
-                        switch state {
-                        case .shown:
-                            button.backgroundColor = UIColor.lightGray
-                        case .hidden:
-                            button.backgroundColor = UIColor.blue
+                switch brain.phase {
+                case .Planning:
+                    if let button = gridView.viewWithTag(r * brain.columns + c + 1) as? UIButton {
+                        switch brain[r, c] {
+                        case .empty:
+                                button.backgroundColor = UIColor.blue
+                        case .occupied:
+                                button.backgroundColor = UIColor.yellow
                         }
-                    case .occupied(let state, _):
-                        switch state {
-                        case .shown:
-                            button.backgroundColor = UIColor.red
-                        case .hidden:
-                            button.backgroundColor = UIColor.blue
+                    }
+                case .Gaming:
+                    // find the button by tag
+                    // our tag is one-based so we add 1
+                    if let button = gridView.viewWithTag(r * brain.columns + c + 1) as? UIButton {
+                        
+                        // funky subscript call with two indexes ([r][c] doesn't seem to work)
+                        switch brain[r, c] {
+                        case .empty(let state):
+                            switch state {
+                            case .shown:
+                                button.backgroundColor = UIColor.lightGray
+                            case .hidden:
+                                button.backgroundColor = UIColor.blue
+                            }
+                        case .occupied(let state, _):
+                            switch state {
+                            case .shown:
+                                button.backgroundColor = UIColor.red
+                            case .hidden:
+                                button.backgroundColor = UIColor.blue
+                            }
                         }
                     }
                 }
@@ -100,21 +123,45 @@ class BattleshipViewController: UIViewController {
                 
                 let letter = String(Character(UnicodeScalar(65 + row)!))
                 button.setTitle("\(letter)\(col + 1)", for: UIControlState())
-                button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-                v.addSubview(button)
+                if brain.phase == .Planning{
+                    button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+                }
+                    v.addSubview(button)
             }
         }
         drawBoard()
     }
     
+    func delay(_ delay:Double, closure:@escaping ()->()) {
+        let when = DispatchTime.now() + delay
+        DispatchQueue.main.asyncAfter(deadline: when, execute: closure)
+    }
+    
+    func Computer() {
+        for r in 0..<brain.rows {
+            for c in 0..<brain.columns {
+                delay(2.0) {
+                    print(r,c)
+                }
+                brain.strike(atRow: r, andColumn: c)
+                // check for win
+                if brain.gameFinished() {
+                    messageLabel.text = "You win!"
+                }
+                else {
+                    messageLabel.text = "Keep guessing"
+                }
+                
+            }
+        }
+    }
     func startGame() {
         brain.resetBoard()
         setUpGameButtons(v: gridView)
-        messageLabel.text = "Good luck"
+        messageLabel.text = "Place your ships"
     }
-    
+
     @IBAction func resetTapped(_ sender: UIButton) {
         startGame()
     }
 }
-
